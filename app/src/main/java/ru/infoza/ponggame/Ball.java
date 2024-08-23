@@ -18,8 +18,8 @@ public class Ball {
         ballHeight = screenX / 50;
         x = screenX / 2;
         y = screenY / 2;
-        velocityX = 400;
-        velocityY = 400;
+        velocityX = 4;
+        velocityY = 4;
         rect = new RectF(x, y, x + ballWidth, y + ballHeight);
     }
 
@@ -29,14 +29,17 @@ public class Ball {
 
         if (rect.left < 0 || rect.right > screenX) {
             velocityX = -velocityX;
+            x += 2*velocityX;
         }
 
         if (rect.top < 0 || rect.bottom > screenY) {
             velocityY = -velocityY;
+            y += 2*velocityY;
         }
 
         if (RectF.intersects(rect, playerPaddle.getRect()) || RectF.intersects(rect, aiPaddle.getRect())) {
             velocityY = -velocityY;
+            y += 2*velocityY;
         }
 
         rect.left = x;

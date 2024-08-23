@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'ru.infoza.ponggame'
-    compileSdk 35
+    compileSdk 34
 
     defaultConfig {
         applicationId "ru.infoza.ponggame"
@@ -26,7 +26,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '35.0.0'
+    buildToolsVersion '34.0.0'
 }
 
 dependencies {

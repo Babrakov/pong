@@ -9,8 +9,10 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.util.Log;
+public class PongView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
-public class PongView extends SurfaceView implements Runnable {
+    private static final String TAG = "PongGame";
 
     private Thread gameThread = null;
     private SurfaceHolder holder;
@@ -23,10 +25,41 @@ public class PongView extends SurfaceView implements Runnable {
     public PongView(Context context, AttributeSet attrs) {
         super(context, attrs);
         holder = getHolder();
+
+        holder.addCallback(this); // Добавляем Callback
+
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+
         paint = new Paint();
+
+
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        // Инициализация размеров экрана
+        screenX = getWidth();
+        screenY = getHeight();
+
+        // Создаем объекты игрока и ИИ после получения размеров экрана
         playerPaddle = new Paddle(screenX, screenY, true);
         aiPaddle = new Paddle(screenX, screenY, false);
         ball = new Ball(screenX, screenY);
+
+        // Запускаем игру
+        resume();
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        // Реагируем на изменение размеров экрана
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // Останавливаем игру
+        pause();
     }
 
     @Override
@@ -50,11 +83,19 @@ public class PongView extends SurfaceView implements Runnable {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        canvas.drawColor(Color.BLACK);
-        paint.setColor(Color.WHITE);
-        playerPaddle.draw(canvas, paint);
-        aiPaddle.draw(canvas, paint);
-        ball.draw(canvas, paint);
+        if (!playing) {
+            // Отображаем сообщение "Пауза"
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(100);
+            paint.setTextAlign(Paint.Align.CENTER);
+            canvas.drawText("Пауза", screenX / 2, screenY / 2, paint);
+        } else {
+            canvas.drawColor(Color.YELLOW);
+            paint.setColor(Color.RED);
+            playerPaddle.draw(canvas, paint);
+            aiPaddle.draw(canvas, paint);
+            ball.draw(canvas, paint);
+        }
     }
 
     public void pause() {
@@ -87,7 +128,15 @@ public class PongView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "KeyCode: ");
         switch (keyCode) {
+            case KeyEvent.KEYCODE_BUTTON_START:
+                if (playing) {
+                    pause();
+                } else {
+                    resume();
+                }
+                return true;
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 playerPaddle.setMovementState(Paddle.MovementState.MOVE_LEFT);
                 return true;
@@ -100,6 +149,7 @@ public class PongView extends SurfaceView implements Runnable {
         }
         return super.onKeyDown(keyCode, event);
     }
+
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {

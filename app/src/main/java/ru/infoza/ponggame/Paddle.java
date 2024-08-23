@@ -25,7 +25,7 @@ public class Paddle {
         height = screenY / 25;
         x = screenX / 2;
         y = isPlayer ? screenY - 50 : 50;
-        paddleSpeed = 600;
+        paddleSpeed = 10;
         rect = new RectF(x, y, x + length, y + height);
     }
 
