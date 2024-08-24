@@ -1,22 +1,17 @@
 package ru.infoza.ponggame;
 
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "PongGame Activity";
+//    private static final String TAG = "PongGame Activity";
 
     private PongView pongView;
 
@@ -36,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 getWindow().setDecorFitsSystemWindows(false);
                 WindowInsetsController controller = getWindow().getInsetsController();
                 if (controller != null) {
+                    controller.hide(WindowInsets.Type.statusBars());
                     controller.hide(WindowInsets.Type.navigationBars());
                     controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
                 }
@@ -46,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 );
+//                requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
             }
         }
     }
@@ -53,12 +52,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        SharedPreferences prefs = getSharedPreferences("PongGame", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("playerScore", pongView.getPlayerScore());
+        editor.putInt("opponentScore", pongView.getAiScore());
+        editor.apply();
+
         pongView.pause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        SharedPreferences prefs = getSharedPreferences("PongGame", MODE_PRIVATE);
+        int playerScore = prefs.getInt("playerScore", 0);
+        int aiScore = prefs.getInt("aiScore", 0);
+        pongView.setPlayerScore(playerScore);
+        pongView.setAiScore(aiScore);
+
         pongView.resume();
     }
 

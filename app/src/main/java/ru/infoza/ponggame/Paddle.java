@@ -6,27 +6,45 @@ import android.graphics.RectF;
 
 public class Paddle {
 
-    private RectF rect;
-    private float length, height;
-    private float x, y;
-    private float paddleSpeed;
-    private int screenX, screenY;
-
-    public enum MovementState {
-        STOPPED, MOVE_LEFT, MOVE_RIGHT
-    }
-
+    private final RectF rect;
+    private final float length;
+    private final float height;
+    private final float paddleSpeed;
+    private final int screenX;
+    private final int screenY;
+    private float x;
+    private float y;
     private MovementState paddleMoving = MovementState.STOPPED;
 
     public Paddle(int screenX, int screenY, boolean isPlayer) {
         this.screenX = screenX;
         this.screenY = screenY;
-        length = screenX / 8;
-        height = screenY / 25;
-        x = screenX / 2;
+        length = (float) screenX / 8;
+        height = (float) screenY / 25;
+        x = (float) screenX / 2;
         y = isPlayer ? screenY - 50 : 50;
         paddleSpeed = 10;
         rect = new RectF(x, y, x + length, y + height);
+    }
+
+    public float getLength() {
+        return length;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
     }
 
     public void update() {
@@ -49,6 +67,10 @@ public class Paddle {
 
     public RectF getRect() {
         return rect;
+    }
+
+    public enum MovementState {
+        STOPPED, MOVE_LEFT, MOVE_RIGHT
     }
 
 }
